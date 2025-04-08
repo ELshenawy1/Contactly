@@ -1,0 +1,111 @@
+﻿@model APIResponse
+
+<table id="ContactTable" class="table">
+	<thead>
+		<tr>
+			<th>
+				Name
+			</th>
+			<th>
+				Phone
+			</th>
+			<th>
+				Address
+			</th>
+			<th>
+				Notes
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in (IEnumerable<Contactly.Web.Models.DTOs.ContactDTO>)Model.Result)
+		{
+			<tr id="R_@item.ID">
+				<td>
+					<span class="s_@item.ID">@item.Name</span>
+					<input class="i_@item.ID form-control" type="text" value="@item.Name" style="display:none" />
+					<span style="display:none" id="nameError_@item.ID" class="text-danger">Name must be between 3 and 50 characters</span>
+				</td>
+				<td>
+					<span class="s_@item.ID">@item.Phone</span>
+					<input class="i_@item.ID form-control" type="text" value="@item.Phone" style="display:none" />
+					<span style="display:none" id="phoneError_@item.ID" class="text-danger">Please enter valid phone no</span>
+				</td>
+				<td>
+					<span class="s_@item.ID">@item.Address</span>
+					<input class="i_@item.ID form-control" type="text" value="@item.Address" style="display:none" />
+					<span style="display:none" id="addressError_@item.ID" class="text-danger">Address is required and cannot exceed 200 characters</span>
+				</td>
+				<td>
+					<span class="s_@item.ID">@item.Notes</span>
+					<input class="i_@item.ID form-control" type="text" value="@item.Notes" style="display:none" />
+					<span style="display:none" id="notesError_@item.ID" class="text-danger">Notes is required and cannot exceed 500 characters</span>
+				</td>
+				<td class="align-middle">
+					<div class="d-flex justify-content-end">
+						<a title="Edit" onclick="UpdateOn(@item.ID)" class="btn btn-success me-2" id="updateBtn_@item.ID">
+							<i class="bi bi-pencil-square"></i>
+						</a>
+						<a title="Save" onclick="Save(@item.ID)" class="btn btn-primary me-2" style="display:none" id="saveBtn_@item.ID">
+							<i class="bi bi-floppy"></i>
+						</a>
+
+						<a title="Remove" onclick="Delete(@item.ID)" class="btn btn-danger" id="removeBtn_@item.ID">
+							<i class="bi bi-trash-fill"></i>
+						</a>
+						<a title="Cancel" onclick="UpdateOff(@item.ID)" class="btn btn-danger" style="display:none" id="cancelBtn_@item.ID">
+							<i class="bi bi-x-square"></i>
+						</a>
+
+					</div>
+
+				</td>
+			</tr>
+		}
+		<tr>
+			<td colspan="5" class="p-2 m-0">
+				<div class="d-flex justify-content-center p-0 m-0">
+					@if (Model.TotalCount > 0)
+					{
+						<span>Show&nbsp;</span>
+						<strong>
+							@((Model.PageIndex - 1) * Model.PageSize + 1) <span> - </span>
+							@(((Model.PageIndex * Model.PageSize) > Model.TotalCount) ? Model.TotalCount : Model.PageIndex * Model.PageSize)
+						</strong>
+						<span>&nbsp;of </span>
+
+						<span><strong>&nbsp;@Model.TotalCount&nbsp;</strong></span>
+						<span>Result</span>
+					}
+					@if (Model.TotalCount == 0)
+					{
+						<strong>There is no items</strong>
+					}
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan="5" class="p-2 m-0">
+				<div class="d-flex justify-content-center">
+					<ul class="pagination">
+						<li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+							<a class="page-link" onclick="loadPage(@(Model.PageIndex - 1))">&laquo;</a>
+						</li>
+						@for (int i = 1; i <= Math.Ceiling((double)Model.TotalCount / (double)Model.PageSize); i++)
+						{
+							<li class="page-item @(Model.PageIndex == i ? "active" : "")">
+								<a class="page-link" onclick="loadPage(@i)">@i</a>
+							</li>
+						}
+						<li class="page-item @(Model.PageIndex == Math.Ceiling((double)Model.TotalCount / (double)Model.PageSize) ? "disabled" : "")">
+							<a class="page-link" onclick="loadPage(@(Model.PageIndex + 1))">&raquo;</a>
+						</li>
+					</ul>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
